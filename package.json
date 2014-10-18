@@ -1,0 +1,11 @@
+{
+  "name"         : "playlyfe_todo",
+  "version"      : "0.0.1",
+  "description"  : "Simple todo application for the playlyfe tutorial",
+  "main"         : "server.js",
+  "author"       : "playlyfe",
+  "dependencies" : {
+    "express"    : "4.4.5"
+  }
+}
+
