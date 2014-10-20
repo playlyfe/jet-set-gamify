@@ -177,20 +177,24 @@ app.controller('mainController',['$scope', function($scope) {
     $scope.options.tab = 2;
     // if the player isn't a part of any team, show the list of available teams that he can join
     if($scope.player.teams.length === 0){
+      // get all the current teams
       client.api(buildRoute('/teams'),'GET', function(teams){
         $scope.$apply(function(){
           $scope.team_list = teams.data;
         });
       });
     }else{
+      // if the player is part of a team
       player_team = $scope.player.teams[0];
       $scope.player_team = player_team;
+      // get the list of all members in the team
       client.api(buildRoute('/teams/'+player_team.id+'/members'), 'GET', function(members){
         $scope.$apply(function(){
           console.log("members ",members);
           $scope.player_team.members = members.data;
         });
       });
+      // get the name of the team
       client.api(buildRoute('/teams/'+player_team.id),'GET',function(team){
         $scope.$apply(function(){
           $scope.player_team.name = team.name;
@@ -200,6 +204,7 @@ app.controller('mainController',['$scope', function($scope) {
   };
 
   $scope.createTeam = function(new_team_name){
+    // create a team
     client.api(buildRoute('/definitions/teams/'+team_definition_id),'POST',{
       'name': new_team_name,
       'access': 'PUBLIC'
