@@ -134,10 +134,12 @@
       <div class="panel panel-default">
         <ul class="nav nav-tabs" role="tablist">
           <li data-ng-class="options.tab===1 ? 'active' : ''"><a data-ng-click="showProfile()">My Profile</a></li>
+          <li data-ng-class="options.tab===2 ? 'active' : ''"><a data-ng-click="showTeams()">Team</a></li>
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">Leaderboards<span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <li><a href data-ng-click="showPlayerLeaderboard()">Top Players</a></li>
+              <li><a href data-ng-click="showTeamLeaderboard()">Top Teams</a></li>
             </ul>
           </li>
         </ul>
@@ -177,11 +179,50 @@
         </div>
 
         <div data-ng-show="options.tab===2" class="panel-body">
+          <div data-ng-show="player.teams.length === 0">
+            <h5>Create Team</h5>
+            <form class="form-inline" role="form" data-ng-submit="createTeam(new_team_name)">
+              <div class="form-group">
+                <input type="text" placeholder="Enter Team Name" data-ng-model="new_team_name">
+              </div>
+              <button type="submit" class="btn btn-primary btn-xs">Create Team</button>
+            </form>
+            <h5>Join Team</h5>
+            <ul class="list-group">
+              <li class="list-group-item" data-ng-repeat="team in team_list">
+                {{team.name}} <span style="float:right;margin:2px 5px"><a title="Join team" data-ng-click="joinTeam(team)"><i class="fa fa-reply"></i></a></span>
+              </li>
+            </ul>
+          </div>
+          <div data-ng-show="player.teams.length > 0">
+            <h4>Team: {{player_team.name}}</h4>
+            <span><a title="Leave Team" data-ng-click="leaveTeam(player_team)" style="margin:2px 5px;"><i class="fa fa-share"></i></a><a title="Delete Team" data-ng-click="deleteTeam(player_team)" style="margin:2px 5px;"><i class="fa fa-trash"></i></a></span>
+            <h5>Members:</h5>
+            <ul class="list-group">
+              <li class="list-group-item" data-ng-repeat="member in player_team.members">
+                {{member.alias}}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div data-ng-show="options.tab===3" class="panel-body">
           <div>
             <h4>Top Players:</h4>
             <ol class="list-group">
               <li class="list-group-item" data-ng-repeat="data in player_lb">
                 {{data.rank}}. {{data.player.alias}}: {{data.score}}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div data-ng-show="options.tab===4" class="panel-body">
+          <div>
+            <h4>Top Teams:</h4>
+            <ol class="list-group">
+              <li class="list-group-item" data-ng-repeat="data in team_lb">
+                {{data.rank}}. {{data.team.name}}: {{data.score}}
               </li>
             </ul>
           </div>

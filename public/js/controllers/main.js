@@ -7,9 +7,11 @@ app.controller('mainController',['$scope', function($scope) {
   $scope.environment = "staging";
 
   // design variables
-  // make sure the game ID matches your game ID
+  // make sure these match your game variables
   $scope.game_id = "tutorial_app";
   var player_leaderboard_id = "overall_player_leaderboard";
+  var team_leaderboard_id = "team_leaderboard";
+  var team_definition_id = "sample_team";
 
   $scope.todos = [];
   $scope.input = {
@@ -75,6 +77,7 @@ app.controller('mainController',['$scope', function($scope) {
           // open notification stream
           Playlyfe.openNotificationStream($scope.environment, $scope.game_id, $scope.player.id, data.token, function(message){
             $scope.$apply(function(){
+              console.log(message);
               $scope.player_activity.unshift(message);
             });
           });
@@ -160,7 +163,7 @@ app.controller('mainController',['$scope', function($scope) {
   };
 
   $scope.showPlayerLeaderboard = function(){
-    $scope.options.tab = 2;
+    $scope.options.tab = 3;
     // get updated leaderboard data
     client.api(buildRoute('/leaderboards/'+player_leaderboard_id,'cycle=alltime'), 'GET', function(leaderboard){
       $scope.$apply(function(){
@@ -169,6 +172,81 @@ app.controller('mainController',['$scope', function($scope) {
     });
   };
 
+
+  $scope.showTeams = function(){
+    $scope.options.tab = 2;
+    // if the player isn't a part of any team, show the list of available teams that he can join
+    if($scope.player.teams.length === 0){
+      client.api(buildRoute('/teams'),'GET', function(teams){
+        $scope.$apply(function(){
+          $scope.team_list = teams.data;
+        });
+      });
+    }else{
+      player_team = $scope.player.teams[0];
+      $scope.player_team = player_team;
+      client.api(buildRoute('/teams/'+player_team.id+'/members'), 'GET', function(members){
+        $scope.$apply(function(){
+          console.log("members ",members);
+          $scope.player_team.members = members.data;
+        });
+      });
+      client.api(buildRoute('/teams/'+player_team.id),'GET',function(team){
+        $scope.$apply(function(){
+          $scope.player_team.name = team.name;
+        });
+      });
+    }
+  };
+
+  $scope.createTeam = function(new_team_name){
+    client.api(buildRoute('/definitions/teams/'+team_definition_id),'POST',{
+      'name': new_team_name,
+      'access': 'PUBLIC'
+    },
+    function(team){
+      client.api(buildRoute('/player'),'GET', function(data){
+        $scope.$apply(function(){
+          $scope.player = data;
+          $scope.showTeams();
+        });
+      });
+    });
+  };
+
+  $scope.joinTeam = function(team){
+    // join the team with the role "Junior"
+    client.api(buildRoute("/teams/"+team.id+"/join"),"POST",{"Junior": true},function(data){
+      client.api(buildRoute('/player'),'GET', function(data){
+        $scope.$apply(function(){
+          $scope.player = data;
+          $scope.showTeams();
+        });
+      });
+    });
+  };
+
+  $scope.leaveTeam = function(team){
+    client.api(buildRoute('/teams/'+team.id+'/leave'),"POST", function(data){
+      $scope.player.teams=[];
+    });
+  };
+
+  $scope.deleteTeam = function(team){
+    client.api(buildRoute('/teams/'+team.id),"DELETE",function(data){
+      $scope.player.teams=[];
+      $scope.showTeams();
+    });
+  };
+
+  $scope.showTeamLeaderboard = function(){
+    $scope.options.tab = 4;
+    client.api(buildRoute('/leaderboards/'+team_leaderboard_id,'cycle=alltime'), 'GET', function(leaderboard){
+      $scope.$apply(function(){
+        $scope.team_lb = leaderboard.data;
+      });
+    });
+  };
 
   if (Playlyfe.getStatus().msg !== 'authenticated') {
     $scope.logged_in = false;
