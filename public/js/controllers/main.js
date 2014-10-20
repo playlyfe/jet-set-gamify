@@ -31,7 +31,7 @@ app.controller('mainController',['$scope', function($scope) {
   */
   var buildRoute = function(route){
     if(arguments.length > 1){
-      var args = Array.slice(arguments);
+      var args = Array.prototype.slice.call(arguments, 0);
       var req_query = args.slice(1,arguments.length).join("&");
     }
     if($scope.environment === "staging"){
