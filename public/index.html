@@ -132,11 +132,17 @@
 
     <div class="col-sm-4">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">My Profile</h3>
-        </div>
+        <ul class="nav nav-tabs" role="tablist">
+          <li data-ng-class="options.tab===1 ? 'active' : ''"><a data-ng-click="showProfile()">My Profile</a></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown">Leaderboards<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href data-ng-click="showPlayerLeaderboard()">Top Players</a></li>
+            </ul>
+          </li>
+        </ul>
 
-        <div class="panel-body">
+        <div data-ng-show="options.tab===1" class="panel-body">
           <div class="media">
             <span class="pull-left">
               <img class="media-object" data-ng-src="{{player.avatar}}" alt="{{player.alias || player.id}}"></img>
@@ -159,7 +165,6 @@
             </li>
           </ul>
           <h4>Recent Notifications:</h4>
-
           <ul class="list-group">
             <li class="list-group-item" data-ng-repeat="story in player_activity" data-ng-show="$index<2">
               <div data-pl-story-builder="story" data-pl-story-context="player" data-pl-profile-data="player" data-pl-env="{{environment}}">
@@ -169,6 +174,17 @@
               <span>No Recent notifications</span>
             </li>
           </ul>
+        </div>
+
+        <div data-ng-show="options.tab===2" class="panel-body">
+          <div>
+            <h4>Top Players:</h4>
+            <ol class="list-group">
+              <li class="list-group-item" data-ng-repeat="data in player_lb">
+                {{data.rank}}. {{data.player.alias}}: {{data.score}}
+              </li>
+            </ul>
+          </div>
         </div>
 
       </div>

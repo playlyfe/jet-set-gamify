@@ -6,8 +6,10 @@ app.controller('mainController',['$scope', function($scope) {
   */
   $scope.environment = "staging";
 
+  // design variables
   // make sure the game ID matches your game ID
   $scope.game_id = "tutorial_app";
+  var player_leaderboard_id = "overall_player_leaderboard";
 
   $scope.todos = [];
   $scope.input = {
@@ -31,7 +33,7 @@ app.controller('mainController',['$scope', function($scope) {
   */
   var buildRoute = function(route){
     if(arguments.length > 1){
-      var args = Array.slice(arguments);
+      var args = Array.prototype.slice.call(arguments, 0);
       var req_query = args.slice(1,arguments.length).join("&");
     }
     if($scope.environment === "staging"){
@@ -58,6 +60,8 @@ app.controller('mainController',['$scope', function($scope) {
       $scope.$apply(function(){
         $scope.player = data;
         $scope.player_activity = [];
+        $scope.options = {};
+        $scope.options.tab = 1;
         // get player profile image
         if($scope.environment!=="staging"){
           $scope.player.avatar = "https://api.playlyfe.com/v1/assets/players/" + data.id + "?size=small&access_token=" + access_token;
@@ -150,6 +154,21 @@ app.controller('mainController',['$scope', function($scope) {
       });
     });
   };
+
+  $scope.showProfile = function(){
+    $scope.options.tab = 1;
+  };
+
+  $scope.showPlayerLeaderboard = function(){
+    $scope.options.tab = 2;
+    // get updated leaderboard data
+    client.api(buildRoute('/leaderboards/'+player_leaderboard_id,'cycle=alltime'), 'GET', function(leaderboard){
+      $scope.$apply(function(){
+        $scope.player_lb = leaderboard.data;
+      });
+    });
+  };
+
 
   if (Playlyfe.getStatus().msg !== 'authenticated') {
     $scope.logged_in = false;
