@@ -1,0 +1,252 @@
+<!doctype html>
+<html data-ng-app="simpleTodo">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Todo App</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,700,700italic,400italic,300,300italic" type="text/css">
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="http://cdn.bootcss.com/bignumber.js/1.4.1/bignumber.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+  <script src="js/lib/playlyfe-js-sdk.min.js"></script>
+  <script src="js/lib/odysseus.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/controllers/main.js"></script>
+  <script src="js/directives/story_builder.js"></script>
+  <style>
+    body {
+      font-family: "Open Sans", "Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    h1, h2, h3 {
+      font-weight: 300;
+    }
+    .score-list {
+      margin-top: 1rem;
+    }
+    .player-score {
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+    .score-point {
+      color: hsl(220, 75%, 50%);
+    }
+    .score-set {
+      color: hsl(263, 70%, 40%);
+    }
+    .score-state {
+      color: hsl(339, 70%, 36%);
+    }
+    .score-compound {
+      color: #bada55;
+    }
+    .player-score-value {
+      font-size: 3rem;
+    }
+    .player-score-metric {
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+  </style>
+
+</head>
+<body ng-controller="mainController">
+  <div class="container" data-ng-hide="logged_in">
+    <div>
+      <h2>You are currently not logged in.</h2><br>
+      <h4>To login using your playlyfe account, click login</h4>
+      <button type="button" class="btn btn-primary" data-ng-click="login()">Login</button>
+    </div>
+  </div>
+
+  <div class="container" data-ng-show="logged_in">
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+
+        <div class="navbar-header">
+          <a class="navbar-brand">Todo App</a>
+        </div>
+
+        <div>
+          <ul data-ng-show="environment==='staging'"class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown">Select Dummy <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li data-ng-repeat="dummy in dummies.list">
+                  <a data-ng-click="changeDummy(dummy)">{{dummy}}</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <p class="navbar-text">Logged in as {{player.alias}}</p>
+            </li>
+            <li>
+              <button id="logout" type="button" class="btn btn-default navbar-btn" data-ng-click="logout()" >Logout</i></button>
+            </li>
+          </ul>
+        </div>
+
+      </div><!-- /.container-fluid -->
+    </nav>
+
+
+    <div class="jumbotron text-center">
+      <h1>What's Next?</h1>
+      <form class="form-horizontal" role="form" data-ng-submit="addTodo()">
+        <div class="form-group">
+          <label class="control-label col-md-2">Todo:</label>
+          <div class="col-md-10">
+            <input type="text" class="form-control" placeholder="Add things to do the list. Strike them off with style!" data-ng-model="input.data" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2">Priority:</label>
+          <div class="radio col-md-8 text-left">
+            <label class="radio-inline">
+              <input name="priority" type="radio" data-ng-model="input.priority" value="high_priority" required> High
+            </label>
+            <label class="radio-inline">
+              <input name="priority" type="radio" data-ng-model="input.priority" value="medium_priority" required> Medium
+            </label>
+            <label class="radio-inline">
+              <input name="priority" type="radio" data-ng-model="input.priority" value="low_priority" required> Low
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-offset-2 col-md-2">
+            <button type="submit" class="btn btn-primary btn-block">Add Task</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- todo form -->
+
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <ul class="nav nav-tabs" role="tablist">
+          <li data-ng-class="options.tab===1 ? 'active' : ''"><a data-ng-click="showProfile()">My Profile</a></li>
+          <li data-ng-class="options.tab===2 ? 'active' : ''"><a data-ng-click="showTeams()">Team</a></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown">Leaderboards<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href data-ng-click="showPlayerLeaderboard()">Top Players</a></li>
+              <li><a href data-ng-click="showTeamLeaderboard()">Top Teams</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <div data-ng-show="options.tab===1" class="panel-body">
+          <div class="media">
+            <span class="pull-left">
+              <img class="media-object" data-ng-src="{{player.avatar}}" alt="{{player.alias || player.id}}"></img>
+            </span>
+            <div class="media-body">
+              <h3 class="media-heading">{{player.alias}}</h3>
+            </div>
+          </div>
+
+          <ul class="list-group score-list">
+            <li class="list-group-item player-score score-{{score.metric.type}}" data-ng-repeat="score in player.scores | orderBy:orderFunction">
+              <div data-ng-if="score.metric.type==='point'" class="player-score-value">{{score.value}}</div>
+              <div data-ng-if="score.metric.type==='state'" class="player-score-value">{{score.value.name}}</div>
+              <div data-ng-if="score.metric.type==='set'" class="player-score-value">
+                <div data-ng-repeat="(name, data) in score.value">
+                  <div class="player-score-value">{{name}}: {{data.count}}</div>
+                </div>
+              </div>
+              <div class="player-score-metric">{{score.metric.name}}</div>
+            </li>
+          </ul>
+          <h4>Recent Notifications:</h4>
+          <ul class="list-group">
+            <li class="list-group-item" data-ng-repeat="story in player_activity" data-ng-show="$index<2">
+              <div data-pl-story-builder="story" data-pl-story-context="player" data-pl-profile-data="player" data-pl-env="{{environment}}">
+              </div>
+            </li>
+            <li class="list-group-item" data-ng-if="player_activity.length === 0">
+              <span>No Recent notifications</span>
+            </li>
+          </ul>
+        </div>
+
+        <div data-ng-show="options.tab===2" class="panel-body">
+          <div data-ng-show="player.teams.length === 0">
+            <h5>Create Team</h5>
+            <form class="form-inline" role="form" data-ng-submit="createTeam(new_team_name)">
+              <div class="form-group">
+                <input type="text" placeholder="Enter Team Name" data-ng-model="new_team_name">
+              </div>
+              <button type="submit" class="btn btn-primary btn-xs">Create Team</button>
+            </form>
+            <h5>Join Team</h5>
+            <ul class="list-group">
+              <li class="list-group-item" data-ng-repeat="team in team_list">
+                {{team.name}} <span style="float:right;margin:2px 5px"><a title="Join team" data-ng-click="joinTeam(team)"><i class="fa fa-reply"></i></a></span>
+              </li>
+            </ul>
+          </div>
+          <div data-ng-show="player.teams.length > 0">
+            <h4>Team: {{player_team.name}}</h4>
+            <span><a title="Leave Team" data-ng-click="leaveTeam(player_team)" style="margin:2px 5px;"><i class="fa fa-share"></i></a><a title="Delete Team" data-ng-click="deleteTeam(player_team)" style="margin:2px 5px;"><i class="fa fa-trash"></i></a></span>
+            <h5>Members:</h5>
+            <ul class="list-group">
+              <li class="list-group-item" data-ng-repeat="member in player_team.members">
+                {{member.alias}}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div data-ng-show="options.tab===3" class="panel-body">
+          <div>
+            <h4>Top Players:</h4>
+            <ol class="list-group">
+              <li class="list-group-item" data-ng-repeat="data in player_lb">
+                {{data.rank}}. {{data.player.alias}}: {{data.score}}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div data-ng-show="options.tab===4" class="panel-body">
+          <div>
+            <h4>Top Teams:</h4>
+            <ol class="list-group">
+              <li class="list-group-item" data-ng-repeat="data in team_lb">
+                {{data.rank}}. {{data.team.name}}: {{data.score}}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-sm-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <span class='label label-info' data-ng-show="todos.length">{{todos.length}}</span>
+            <span data-ng-pluralize count="todos.length" when="{'0': 'Nothing', '1': 'Thing', 'other': 'Things'}"></span> To Do
+          </h3>
+        </div>
+        <div class="panel-body">
+          <ul class="list-group">
+            <li class="list-group-item" data-ng-repeat="todo in todos" data-ng-class="{low_priority:'list-group-item-info', medium_priority:'list-group-item-warning', high_priority:'list-group-item-danger'}[todo.priority]"> {{ todo.data }} <span style="float:right;margin:2px 5px;"><a data-ng-click="deleteTodo(todo)"><i class="fa fa-trash"></i></a></span><span style="float:right;margin:2px 5px;"><a data-ng-click="finishTodo(todo)" align="right"><i class="fa fa-check"></i></a></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
