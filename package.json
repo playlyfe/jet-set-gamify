@@ -3,9 +3,18 @@
   "version"      : "0.0.1",
   "description"  : "Simple todo application for the playlyfe tutorial",
   "main"         : "server.js",
-  "author"       : "playlyfe",
+  "author"       : {
+    "name": "Rajan Rastogi",
+    "email": "rajan@playlyfe.com"
+  },
   "dependencies" : {
     "express"    : "4.4.5"
-  }
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ]
 }
 
