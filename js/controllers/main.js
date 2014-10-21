@@ -4,7 +4,7 @@ app.controller('mainController',['$scope', function($scope) {
    environment of the app, should be 'staging' when testing,
    otherwise can be set to 'production'
   */
-  $scope.environment = "staging";
+  $scope.environment = "production";
 
   // design variables
   // make sure these match your game variables
