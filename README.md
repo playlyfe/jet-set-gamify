@@ -27,7 +27,33 @@ npm start
 
 This would run a simple local web server and you can view the application at [http://localhost:8081](http://localhost:8081) in your browser.
 
-You can also play around with the [live demo](http://playlyfe.github.io/jet-set-gamify/).
+### Tutorial Outline
+
+You can checkout at any point of the tutorial by using `git checkout step-?`
+You can also see the changes between steps by using the command `git diff step-?..step-?`
+
+You can also play around with the [live demo](http://playlyfe.github.io/jet-set-gamify/) of the app that we build in this tutorial (playlyfe account required).
+
+step-0:
+* Vanilla Todo app, we take this as the starting point
+
+step-1:
+* Design basic points and actions on the platform
+* Website Integration
+..* Overview of the Playlyfe JS SDK and OAuth2.0 Implicit Grant Flow
+..* Make API calls to Playlyfe using the SDK
+..* Integrate Playlyfe's realtime notifications
+
+step-2:
+* Design Achievement and Level Rules, with an introduction to Playlyfe's Realtime Leaderboards.
+* Website Integration
+..* Integrate Leaderboards into the app
+
+step-3:
+* Design and understand Teams in Playlyfe
+* Website Integration
+..* Integrate team operations(create/join/leave/delete) into the app
+
 
 ## License
 
