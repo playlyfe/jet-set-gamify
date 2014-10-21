@@ -40,19 +40,19 @@ step-0:
 step-1:
 * Design basic points and actions on the platform
 * Website Integration
-..* Overview of the Playlyfe JS SDK and OAuth2.0 Implicit Grant Flow
-..* Make API calls to Playlyfe using the SDK
-..* Integrate Playlyfe's realtime notifications
+  * Overview of the Playlyfe JS SDK and OAuth2.0 Implicit Grant Flow
+  * Make API calls to Playlyfe using the SDK
+  * Integrate Playlyfe's realtime notifications
 
 step-2:
 * Design Achievement and Level Rules, with an introduction to Playlyfe's Realtime Leaderboards.
 * Website Integration
-..* Integrate Leaderboards into the app
+  * Integrate Leaderboards into the app
 
 step-3:
 * Design and understand Teams in Playlyfe
 * Website Integration
-..* Integrate team operations(create/join/leave/delete) into the app
+  * Integrate team operations(create/join/leave/delete) into the app
 
 
 ## License
